@@ -25,7 +25,8 @@ end
 # Plz don't make fun of me for my super inefficient code
 # startup + yearly should be in hours, so divide by value of time in $/hr first.
 def best_start(startup, yearly, decay_rr, decay, hazard_rr, hazard)
-  yearly /= 8765.8 # hours in a year
+  startup /= 8765.8 # hours in a year
+  yearly /= 8765.8
   best_savings = 0.0
   best_age = 1000
   for age in 0..100
@@ -41,8 +42,8 @@ def best_start(startup, yearly, decay_rr, decay, hazard_rr, hazard)
 end
 
 def threshold(startup, yearly, decay_rr, decay, hazard_rr, hazard)
-  yearly /= 8765.8 # hours in a year
-  startup /= 8765.8
+  startup /= 8765.8 # hours in a year
+  yearly /= 8765.8
   best_ratio = 0.0
   best_age = 1000
   for age in 0..100
@@ -78,6 +79,7 @@ end
 ############### Alter this!
 timeValue = 60.0
 
+# from http://circ.ahajournals.org/content/109/22/2705.full
 puts ""
 p "Fish:"
 ihd_death_rate = 3087.4
@@ -85,19 +87,37 @@ total_death_rate = 14422.2
 rr_per_20_gram_over_day = 0.07
 
 fish_rr = 1.0 - (ihd_death_rate / total_death_rate * rr_per_20_gram_over_day / 20) # Benefits are a bit nonlinear, but we're calculating just for 1 g/day of fish.
-p "1 g/d of fish has RR of " + fish_rr.to_s
+p "1 g/day of fish has rr of " + fish_rr.to_s
 ############### Alter this!
 fish_cost = 17.99 / 453.6 * 365.2 # Some fish I found at the market. Cost / g/lb * day/yr.
-p "1 g/d of fish costs you $" + fish_cost.to_s
-p "1 g/d of fish earns you " + years_gained(0, 1.0, decay, fish_rr, hazard).to_s + " years of life."
+p "1 g/day of fish costs you $" + fish_cost.to_s + " per year"
+p "1 g/day of fish earns you " + years_gained(0, 1.0, decay, fish_rr, hazard).to_s + " years of life."
 #  return years_left(decay_rr * decay, hazard_rr * hazard * (decay ** age)) \
  #   - years_left(decay, hazard * (decay ** age))
 p best_start(0.0, fish_cost / timeValue, 1.0, decay, fish_rr, hazard)
 p threshold(0.0, fish_cost , 1.0, decay, fish_rr, hazard)
 
+# Results
+# "1 g/day of fish has RR of 0.9992507453786523"
+# "1 g/day of fish costs you $14.48401234567901 per year"
+# "1 g/day of fish earns you 0.0070281073951150574 years of life."
+# [optimal gain, start age]
+# [0.005692665013903309, 41]
+# [threshold ratio, .]
+# [2.536722856331994, 100]
 
+
+# from http://ajcn.nutrition.org/content/70/3/500s.full
+# especially http://ajcn.nutrition.org/content/70/3/500s/T3.expansion.html
 puts ""
 p "Nuts:"
+
+nut_2_times_rr = 0.88 # Really, 1-4. I'll use 2.5
+
+
+
+nut_5_times_rr = 0.67 # Really, >= 5. I'll use 5.5
+
 
 # Can we find evidence of altered decay rates? Best possible data would likely be an intervention (positive or negative) used for >20 years, followed by non-intervention for >20 years. Trend lines during the intervention and hazard rr after can distinguish some heterogeneous population effect from a decay effect.
 # Trend line calculations for smoking: https://docs.google.com/spreadsheets/d/1mquZAD6hxZAX3hG6Tf3V9LadZyfNYyHFK6u0RhtkzO0/edit#gid=0
